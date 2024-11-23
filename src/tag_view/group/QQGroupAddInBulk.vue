@@ -4,7 +4,7 @@
 </script>
 
 <template>
-  <h1>建设中</h1>
+  <h1>因QQ协议限制,高危操作暂停开发</h1>
 </template>
 
 <style scoped>

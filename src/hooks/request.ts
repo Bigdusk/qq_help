@@ -1,7 +1,7 @@
 import axios from "axios";
 import { notification } from "./discrete_api";
 const axios_util = axios.create({
-    baseURL: "http://localhost:8888",
+    baseURL: "http://api.hhzx.top:7777",
     timeout: 60000
 });
 
@@ -14,25 +14,6 @@ interface ApiResponse<T> {
 //请求拦截器
 axios_util.interceptors.request.use(
     config => {
-
-        // //权限验证
-        // const computer = ref<Computer>({
-        //     authorization_id: 0,
-        //     computer_id: "",
-        //     expires_at: null,
-        //     is_active: null
-        // })
-
-        // computer.value.computer_id = localStorage.getItem('fingerprint') as string
-
-        // post('/computer/auth', computer.value).then(r => {
-        //     console.log(r);
-        // })
-        // .catch(e => {
-        //     console.log(e);
-            
-        // })
-
         return config;
     },
     error => {
@@ -43,14 +24,14 @@ axios_util.interceptors.request.use(
 axios_util.interceptors.response.use(
     response => {
         if (response.data.code === 500) {
-            notification.create({title: response.data.message})
+            notification.create({title: response.data.message,duration: 5000,})
         }
         return response.data;
     },
     error => {
         console.log(error);
         
-        notification.error({title: error.message})
+        notification.error({title: error.message,duration: 5000,})
 
         return Promise.reject(error);
     }

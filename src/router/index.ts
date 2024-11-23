@@ -24,6 +24,10 @@ const router = createRouter({
       component: () => import('../tag_view/group/QQGroupExport.vue')
     },
     {
+      path: '/group_export',
+      component: () => import('../tag_view/group/GroupExport.vue')
+    },
+    {
       path: '/qq_group_add_in_bulk',
       component: () => import('../tag_view/group/QQGroupAddInBulk.vue')
     },
@@ -34,6 +38,14 @@ const router = createRouter({
     {
       path: '/setting',
       component: () => import('../tag_view/Settings.vue')
+    },
+    {
+      path: '/qq_message',
+      component: () => import('../tag_view/message/QQMessage.vue')
+    },
+    {
+      path: '/email_send',
+      component: () => import('../tag_view/message/EmailSend.vue')
     }
   ]
 })

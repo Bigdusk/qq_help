@@ -6,6 +6,8 @@ import { changeTime, uniqueArrayOfObjects } from '../../hooks';
 import QQGroupSupervisionAndScrapingSetting from '../../components/group/QQGroupSupervisionAndScrapingSetting.vue';
 import { DataTableColumns, DataTableInst } from 'naive-ui';
 import { post } from '../../hooks/request_local';
+import { darkTheme } from 'naive-ui'
+
 
 //开启监听
 const socket = ref<WebSocket | null>(null);
@@ -187,6 +189,7 @@ onMounted(() => {
   <n-tabs type="line" animated>
     <n-tab-pane name="JK" tab="监控">
 
+      <n-config-provider :theme="darkTheme">
       <n-card :bordered="false" hoverable>
 
         <n-infinite-scroll style="max-height: 70vh;" :distance="10">
@@ -225,7 +228,7 @@ onMounted(() => {
         </n-infinite-scroll>
 
       </n-card>
-
+    </n-config-provider>
     </n-tab-pane>
     <n-tab-pane name="data" tab="数据">
         <n-button @click="exportSorterAndFilterCsv">

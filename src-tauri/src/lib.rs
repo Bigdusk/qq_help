@@ -1,8 +1,4 @@
-
 use chrono::Local;
-use entity::email::EmailConfig;
-use entity::email::EmailContent;
-use entity::email::EmailInfo;
 use entity::email::EmailPacket;
 use md5::Digest;
 use md5::Md5;
@@ -18,7 +14,7 @@ fn send_email(email_packet: EmailPacket) -> Result<bool, bool> {
         Err(e) => {
             println!("{:?}", e);
             Err(false)
-        },
+        }
     }
 }
 
@@ -47,45 +43,5 @@ fn md5_build(value: &str) -> String {
 
 #[test]
 fn t() {
-    let config = EmailConfig {
-        smtp_url: "smtp.163.com".to_string(),
-        smtp_username: "19558797134@163.com".to_string(),
-        smtp_password: "DH8YMPn32D2PQkiA".to_string(),
-        port: 25,
-        max_size: 30,
-    };
-
-    let from = EmailInfo {
-        name: "网易邮箱".to_string(),
-        email: "19558797134@163.com".to_string(),
-    };
-
-    let reply = EmailInfo {
-        name: "回复邮箱".to_string(),
-        email: "19558797134@163.com".to_string(),
-    };
-
-    let to = EmailInfo {
-        name: "qq邮箱".to_string(),
-        email: "2831828656@qq.com".to_string(),
-    };
-
-    let content = EmailContent {
-        subject: "主题".to_string(),
-        plain: "plain".to_string(),
-        html: "<p><b>Hello</b>, <i>world</i>! <img src=\"cid:123\"></p>".to_string(),
-    };
-
-    let email = EmailPacket {
-        config,
-        from,
-        reply,
-        to,
-        content,
-    };
-
-    match email.send() {
-        Ok(r) => println!("{:?}", r),
-        Err(e) => println!("{:?}", e),
-    }
+    
 }

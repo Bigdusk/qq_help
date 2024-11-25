@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Email: typeof import('./src/components/setting/Email.vue')['default']
     EmailSendSetting: typeof import('./src/components/message/EmailSendSetting.vue')['default']
+    NAlert: typeof import('naive-ui')['NAlert']
     NAvatar: typeof import('naive-ui')['NAvatar']
     NBadge: typeof import('naive-ui')['NBadge']
     NBlockquote: typeof import('naive-ui')['NBlockquote']
@@ -22,7 +23,6 @@ declare module 'vue' {
     NDynamicInput: typeof import('naive-ui')['NDynamicInput']
     NDynamicTags: typeof import('naive-ui')['NDynamicTags']
     NFlex: typeof import('naive-ui')['NFlex']
-    NFormItem: typeof import('naive-ui')['NFormItem']
     NInfiniteScroll: typeof import('naive-ui')['NInfiniteScroll']
     NInput: typeof import('naive-ui')['NInput']
     NInputNumber: typeof import('naive-ui')['NInputNumber']

@@ -10,6 +10,9 @@ import axios from 'axios';
 import { EmailConfig, EmailPacket, EmailParameter } from '../../entity';
 import { sleep } from '../../hooks';
 import { invoke } from '@tauri-apps/api/core';
+import { darkTheme } from 'naive-ui'
+
+
 const email_content = ref({
     subject: '',
     content: ''
@@ -46,11 +49,11 @@ const onSave = (_v: string, h: Promise<any>) => {
 };
 onMounted(() => {
     const t = localStorage.getItem('email_temp')
-    if(t) {
+    if (t) {
         temp_text.value = JSON.parse(t)
     }
     const e = localStorage.getItem('email_content')
-    if(e) {
+    if (e) {
         email_content.value = JSON.parse(e)
     }
 })
@@ -162,11 +165,17 @@ const email_send_all = async () => {
         await sleep(email_parameter_all.time)
         //开始执行
         try {
-            let r = await invoke('send_email', {emailPacket: email_send_list[email_send_index]});
-            console.log('邮件是否成功'+ r);
-            
+            await invoke('send_email', { emailPacket: email_send_list[email_send_index] });
+            message_queues.value.push({
+                email_packet: email_send_list[email_send_index],
+                is_ok: '发送成功'
+            })
+
         } catch (e) {
-            console.log(e);
+            message_queues.value.push({
+                email_packet: email_send_list[email_send_index],
+                is_ok: '发送失败'
+            })
         }
 
         email_index++
@@ -176,27 +185,58 @@ const email_send_all = async () => {
 
     console.log(email_data.value);
     console.log(email_send_list);
-    
+
     is_run_send_email.value = false
 }
 
 //控制是否执行邮件发送
 const is_run_send_email = ref(false)
+//监控消息队列
+const message_queues = ref<{
+    email_packet: EmailPacket
+    is_ok: string
+}[]>([])
 </script>
 
 <template>
-    <h1>邮件一键群发(功能建设中，暂时不可用)</h1>
+    <h1>邮件一键群发(功能测试中, 有问题请反馈给代理)</h1>
     <n-flex>
         <n-card content-style="padding: 0;" style="width: 78%;" hoverable>
+            <n-alert title="提示" type="info">
+                1.在设置里面配置邮件smtp邮件服务器。
+                2.在当前界面邮件发送配置参数。
+                3.保存邮件内容后再发送。
+            </n-alert>
             <div>
                 <n-input v-model:value="email_content.subject" style="width: 300px;" type="text" placeholder="主题" />
                 <EmailSendSetting />
             </div>
 
             <MdEditor @onUploadImg="onUploadImg" @on-save="onSave" v-model="temp_text" />
-            <n-button v-show="!is_run_send_email" @click="email_send_all" style="width: 100%;" type="primary">开始执行</n-button>
-            <n-button v-show="is_run_send_email" @click="is_run_send_email = false" style="width: 100%;" type="primary">取消执行</n-button>
-            <n-tag :bordered="false" type="info">tip: 群发时请先到设置界面配置邮件服务器</n-tag>
+            <n-button v-show="!is_run_send_email" @click="email_send_all" style="width: 100%;"
+                type="primary">开始执行</n-button>
+            <n-button v-show="is_run_send_email" @click="is_run_send_email = false" style="width: 100%;"
+                type="primary">取消执行</n-button>
+
+            <n-infinite-scroll style="max-height: 20vh;" :distance="10">
+                <n-config-provider :theme="darkTheme">
+                    <n-card hoverable>
+                        <n-space style="display: flex; flex-direction: column-reverse;">
+                            <div v-for="m in message_queues">
+                                <n-tag v-show="m.is_ok === '发送成功'" type="success">
+                                    {{ '由' + m.email_packet.from.email + '到' + m.email_packet.to.email + '发送：' +
+                                    m.is_ok}}
+                                </n-tag>
+                                <n-tag v-show="m.is_ok === '发送失败'" type="error">
+                                    {{ '由' + m.email_packet.from.email + '到' + m.email_packet.to.email + '发送：' +
+                                    m.is_ok}}
+                                </n-tag>
+                            </div>
+                        </n-space>
+                    </n-card>
+                </n-config-provider>
+            </n-infinite-scroll>
+
         </n-card>
 
         <n-card style="width: 20%;" hoverable>

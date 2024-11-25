@@ -115,7 +115,7 @@ onMounted(() => {
     //初始化配置
     const email_server_list = localStorage.getItem('email_server_list')
 
-    if(email_server_list) {
+    if (email_server_list) {
         customValue.value = JSON.parse(email_server_list)
     }
 })
@@ -123,12 +123,12 @@ onMounted(() => {
 
 <template>
     <n-card title="邮件设置" hoverable>
+        <n-alert title="提示" type="info">
+            邮件服务器矩阵,通过添加多个邮件服务器轮播发送,避免单一邮件服务器或者账号被拉黑或者被判定垃圾邮件。tip:建议添加不同厂商的邮件服务器以避免被邮件服务器厂商拉黑ip地址。
+        </n-alert>
         <n-button @click="save" type="primary">
             保存
         </n-button>
-        <n-tag :bordered="false" type="info">
-            邮件服务器矩阵，通过添加多个邮件服务器轮播发送，避免单一邮件服务器或者账号被拉黑或者被判定垃圾邮件。tip:建议添加不同厂商的邮件服务器以避免被邮件服务器厂商拉黑ip地址。
-        </n-tag>
         <n-dynamic-input v-model:value="customValue" :on-create="onCreate">
             <template #default="{ value }">
                 <div style="display: flex; align-items: center; width: 100%">

@@ -100,8 +100,7 @@ const onCreate = () => {
         smtp_url: 'smtp.xxx.com',
         smtp_username: 'xxxxx@xxxx.com',
         smtp_password: 'DH8YMPn32D2PQkil',
-        port: 25,
-        max_size: 30
+        port: 25
     }
 }
 
@@ -119,38 +118,38 @@ onMounted(() => {
         customValue.value = JSON.parse(email_server_list)
     }
 })
+const delete_all = () => {
+    customValue.value.length = 0
+}
+
 </script>
 
 <template>
-    <n-card title="邮件设置" hoverable>
-        <n-alert title="提示" type="info">
-            邮件服务器矩阵,通过添加多个邮件服务器轮播发送,避免单一邮件服务器或者账号被拉黑或者被判定垃圾邮件。tip:建议添加不同厂商的邮件服务器以避免被邮件服务器厂商拉黑ip地址。
-        </n-alert>
+    <n-alert title="提示" type="info">
+        请尽量避免同一ip或者同一内容频繁发送
+    </n-alert>
+    <n-flex justify="space-between">
         <n-button @click="save" type="primary">
             保存
         </n-button>
+        <n-button @click="delete_all" type="error">
+            一键清除所有(保存后生效)
+        </n-button>
+    </n-flex>
+
+    <n-infinite-scroll style="max-height: 70vh;" :distance="10">
         <n-dynamic-input v-model:value="customValue" :on-create="onCreate">
             <template #default="{ value }">
-                <div style="display: flex; align-items: center; width: 100%">
-                    <n-card title="邮件服务器地址" size="small" hoverable>
-                        <n-input v-model:value="value.smtp_url" type="text" />
-                    </n-card>
-                    <n-card title="发送邮箱" size="small" hoverable>
-                        <n-input v-model:value="value.smtp_username" type="text" />
-                    </n-card>
-                    <n-card title="授权码" size="small" hoverable>
-                        <n-input v-model:value="value.smtp_password" type="text" />
-                    </n-card>
-                    <n-card title="服务器端口" size="small" hoverable>
-                        <n-input-number v-model:value="value.port" clearable />
-                    </n-card>
-                    <n-card title="超时时间" size="small" hoverable>
-                        <n-input-number v-model:value="value.max_size" clearable />
-                    </n-card>
+                <div style="display: flex; align-items: center; width: 89%">
+                    <n-input v-model:value="value.smtp_url" style="width: 400px;" type="text" placeholder="smtp" />
+                    <n-input-number v-model:value="value.port" style="width: 200px;" placeholder="端口" />
+                    <n-input v-model:value="value.smtp_username" style="width: 400px;" type="text" placeholder="邮箱" />
+                    <n-input v-model:value="value.smtp_password" style="width: 400px;" type="text" placeholder="授权码" />
                 </div>
             </template>
         </n-dynamic-input>
-    </n-card>
+    </n-infinite-scroll>
+
 </template>
 
 <style scoped></style>

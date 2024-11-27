@@ -91,7 +91,7 @@ onMounted(async () => {
         </n-layout>
       </n-layout>
       <n-layout-footer position="absolute" style="height: 64px; padding: 24px" bordered>
-        版本: 0.1.1 | 软件使用到期时间: {{ computer.expires_at }}
+        版本: 0.1.2 | 软件使用到期时间: {{ computer.expires_at }}
         <CardKeyButton />
       </n-layout-footer>
     </n-layout>

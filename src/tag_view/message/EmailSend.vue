@@ -11,6 +11,7 @@ import { EmailConfig, EmailPacket, EmailParameter } from '../../entity';
 import { sleep } from '../../hooks';
 import { invoke } from '@tauri-apps/api/core';
 import { darkTheme } from 'naive-ui'
+import EmailOfSmtpAndList from '../../components/message/EmailOfSmtpAndList.vue';
 
 
 const email_content = ref({
@@ -86,6 +87,7 @@ const onUploadImg = async (files: File[], callback: (urls: string[]) => void) =>
 
 //邮件群发系统
 const email_send_all = async () => {
+    message_queues.value.length = 0
     //检测是否配置矩阵
     const email_server_list = localStorage.getItem('email_server_list')
     if (!email_server_list) {
@@ -110,8 +112,7 @@ const email_send_all = async () => {
                 smtp_url: email_config.smtp_url,
                 smtp_username: email_config.smtp_username,
                 smtp_password: email_config.smtp_password,
-                port: email_config.port,
-                max_size: email_config.max_size
+                port: email_config.port
             },
             from: {
                 name: email_parameter_all.from.name,
@@ -122,7 +123,7 @@ const email_send_all = async () => {
                 email: email_parameter_all.reply.email
             },
             to: {
-                name: email_parameter_all.to.name,
+                name: null,
                 email: null
             },
             content: {
@@ -160,21 +161,28 @@ const email_send_all = async () => {
         }
 
         //准备发送数据
+        email_send_list[email_send_index].to.name = JSON.stringify(email_data.value[email_index])//填充收件人名称
         email_send_list[email_send_index].to.email = email_data.value[email_index]//填充邮箱
         //执行时间间隔
         await sleep(email_parameter_all.time)
         //开始执行
         try {
             await invoke('send_email', { emailPacket: email_send_list[email_send_index] });
+            console.log(email_send_list[email_send_index].to.email);
+
             message_queues.value.push({
-                email_packet: email_send_list[email_send_index],
+                id: email_index,
+                from_email: email_send_list[email_send_index].from.email,
+                to_email: email_send_list[email_send_index].to.email,
                 is_ok: '发送成功'
             })
 
         } catch (e) {
             message_queues.value.push({
-                email_packet: email_send_list[email_send_index],
-                is_ok: '发送失败'
+                id: email_index,
+                from_email: email_send_list[email_send_index].from.email,
+                to_email: email_send_list[email_send_index].to.email,
+                is_ok: String(e)
             })
         }
 
@@ -183,33 +191,46 @@ const email_send_all = async () => {
 
     }
 
-    console.log(email_data.value);
-    console.log(email_send_list);
-
     is_run_send_email.value = false
 }
 
 //控制是否执行邮件发送
 const is_run_send_email = ref(false)
 //监控消息队列
-const message_queues = ref<{
-    email_packet: EmailPacket
+const message_queues = ref <{
+    id: number
+    from_email: string|null
+    to_email: string|null
     is_ok: string
-}[]>([])
+}[] > ([])
+//粘贴复制邮箱
+const copy_email_show = ref(false)
+//保存粘贴邮箱
+const copy_email_value = ref('')
+//将粘贴邮箱导入
+const copy_email_add = () => {
+    const email = copy_email_value.value.trim().split('\n')
+    email_data.value = email
+    message.success('导入成功')
+    copy_email_show.value = false
+}
 </script>
 
 <template>
-    <h1>邮件一键群发(功能测试中, 有问题请反馈给代理)</h1>
+    <h1>邮件一键群发</h1>
     <n-flex>
         <n-card content-style="padding: 0;" style="width: 78%;" hoverable>
             <n-alert title="提示" type="info">
-                1.在设置里面配置邮件smtp邮件服务器。
-                2.在当前界面邮件发送配置参数。
-                3.保存邮件内容后再发送。
+                1.配置发件箱
+                2.配置参数
+                3.保存邮件内容。
+                4.导入发送邮箱列表
+                5.发送
             </n-alert>
             <div>
                 <n-input v-model:value="email_content.subject" style="width: 300px;" type="text" placeholder="主题" />
                 <EmailSendSetting />
+                <EmailOfSmtpAndList />
             </div>
 
             <MdEditor @onUploadImg="onUploadImg" @on-save="onSave" v-model="temp_text" />
@@ -222,35 +243,66 @@ const message_queues = ref<{
                 <n-config-provider :theme="darkTheme">
                     <n-card hoverable>
                         <n-space style="display: flex; flex-direction: column-reverse;">
-                            <div v-for="m in message_queues">
-                                <n-tag v-show="m.is_ok === '发送成功'" type="success">
-                                    {{ '由' + m.email_packet.from.email + '到' + m.email_packet.to.email + '发送：' +
-                                    m.is_ok}}
+                            <div v-for="m in message_queues" :key="m.id">
+                                <n-tag v-if="m.is_ok === '发送成功'" type="success">
+                                    {{ '由' + m.from_email + '到' + m.to_email + '发送到服务器：' +
+                                        m.is_ok }}
                                 </n-tag>
-                                <n-tag v-show="m.is_ok === '发送失败'" type="error">
-                                    {{ '由' + m.email_packet.from.email + '到' + m.email_packet.to.email + '发送：' +
-                                    m.is_ok}}
+                                <n-tag v-else type="error">
+                                    {{ '由' + m.from_email + '到' + m.to_email + '发送到服务器：' +
+                                        m.is_ok }}
                                 </n-tag>
                             </div>
                         </n-space>
                     </n-card>
                 </n-config-provider>
             </n-infinite-scroll>
-
         </n-card>
 
         <n-card style="width: 20%;" hoverable>
-            <h3>导入邮箱</h3>
-            <input type="file" @change="csv_file_upload">
+            <h3>导入目标邮箱</h3>
+            <n-button>
+                <label for="fileInput" class="custom-file-upload">
+                    CSV文件导入
+                </label>
+            </n-button>
 
-            <div v-for="e in email_data">
-                <n-blockquote align-text>
-                    {{ e }}
-                </n-blockquote>
-            </div>
+            <n-button @click="copy_email_show = true">粘贴导入</n-button>
+            <input style="display: none;" type="file" id="fileInput" accept=".csv" @change="csv_file_upload" single>
+
+            <n-infinite-scroll style="max-height: 70vh;" :distance="10">
+                <div v-for="e in email_data">
+                    <n-blockquote align-text>
+                        {{ e }}
+                    </n-blockquote>
+                </div>
+            </n-infinite-scroll>
+
         </n-card>
     </n-flex>
 
+
+
+
+    <!-- 粘贴导入发送邮箱 -->
+    <n-modal v-model:show="copy_email_show">
+        <n-card style="width: 600px" title="粘贴邮箱导入" :bordered="false" size="huge" role="dialog" aria-modal="true">
+            <n-button @click="copy_email_add">导入</n-button>
+            {{ copy_email_value }}
+            <n-infinite-scroll style="max-height: 60vh;" :distance="10">
+
+                <n-input type="textarea" v-model:value="copy_email_value" placeholder="xxx@.com
+xxx@.com
+xxx@.com
+xxx@.com
+xxx@.com
+xxx@.com
+...
+                " />
+
+            </n-infinite-scroll>
+        </n-card>
+    </n-modal>
 </template>
 
 <style scoped></style>

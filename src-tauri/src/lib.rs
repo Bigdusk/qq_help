@@ -7,13 +7,15 @@ pub mod entity;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
-fn send_email(email_packet: EmailPacket) -> Result<bool, bool> {
-    println!("{:?}", email_packet.clone());
+async fn send_email(email_packet: EmailPacket) -> Result<String, String> {
     match email_packet.send() {
-        Ok(_) => Ok(true),
+        Ok(r) => {
+            println!("{:?}", r);
+            Ok(r.code().to_string())
+        },
         Err(e) => {
             println!("{:?}", e);
-            Err(false)
+            Err(e.to_string())
         }
     }
 }

@@ -8,7 +8,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Email: typeof import('./src/components/setting/Email.vue')['default']
+    EmailOfSmtpAndList: typeof import('./src/components/message/EmailOfSmtpAndList.vue')['default']
     EmailSendSetting: typeof import('./src/components/message/EmailSendSetting.vue')['default']
+    EmailSendSetting2: typeof import('./src/components/message/EmailSendSetting2.vue')['default']
     NAlert: typeof import('naive-ui')['NAlert']
     NAvatar: typeof import('naive-ui')['NAvatar']
     NBadge: typeof import('naive-ui')['NBadge']
@@ -25,6 +27,8 @@ declare module 'vue' {
     NFlex: typeof import('naive-ui')['NFlex']
     NInfiniteScroll: typeof import('naive-ui')['NInfiniteScroll']
     NInput: typeof import('naive-ui')['NInput']
+    NInputGroup: typeof import('naive-ui')['NInputGroup']
+    NInputGroupLabel: typeof import('naive-ui')['NInputGroupLabel']
     NInputNumber: typeof import('naive-ui')['NInputNumber']
     NLayout: typeof import('naive-ui')['NLayout']
     NLayoutFooter: typeof import('naive-ui')['NLayoutFooter']
@@ -34,10 +38,12 @@ declare module 'vue' {
     NSelect: typeof import('naive-ui')['NSelect']
     NSpace: typeof import('naive-ui')['NSpace']
     NSpin: typeof import('naive-ui')['NSpin']
+    NSwitch: typeof import('naive-ui')['NSwitch']
     NTabPane: typeof import('naive-ui')['NTabPane']
     NTabs: typeof import('naive-ui')['NTabs']
     NTag: typeof import('naive-ui')['NTag']
     QQGroupSupervisionAndScrapingSetting: typeof import('./src/components/group/QQGroupSupervisionAndScrapingSetting.vue')['default']
+    QQMessageSetting: typeof import('./src/components/message/QQMessageSetting.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

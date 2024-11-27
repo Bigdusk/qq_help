@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { TabsProps } from 'naive-ui'
-import Email from '../components/setting/Email.vue';
 
 const placement = ref<NonNullable<TabsProps['placement']>>('left')
 const type = ref<TabsProps['type']>('card')
@@ -18,9 +17,6 @@ const type = ref<TabsProps['type']>('card')
       :placement="placement">
       <n-tab-pane name="index" tab="通用设置">
         建设
-      </n-tab-pane>
-      <n-tab-pane name="email" tab="邮件设置">
-        <Email/>
       </n-tab-pane>
     </n-tabs>
 </template>

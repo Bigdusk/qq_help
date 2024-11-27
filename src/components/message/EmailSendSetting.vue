@@ -51,16 +51,13 @@ onMounted(() => {
             <n-card title="每封邮件间隔(毫秒级)" hoverable>
                 <n-input-number v-model:value="email_parameter.time" clearable />
             </n-card>
-            <n-card title="发件人" hoverable>
-                <n-input v-model:value="email_parameter.from.name" type="text" style="width: 300px;" placeholder="发件人" />
+            <n-card title="发件人名称" hoverable>
+                <n-input v-model:value="email_parameter.from.name" type="text" placeholder="发件人" />
             </n-card>
-            <n-card title="回复人" hoverable>
-                <n-input v-model:value="email_parameter.reply.name" type="text" style="width: 300px;" placeholder="回复人" />
+            <n-card title="回复邮箱" hoverable>
+                <n-input v-model:value="email_parameter.reply.name" type="text" placeholder="回复人" />
                 
-                <n-input v-model:value="email_parameter.reply.email" type="text" style="width: 300px;" placeholder="回复人邮件地址" />
-            </n-card>
-            <n-card title="收件人" hoverable>
-                <n-input v-model:value="email_parameter.to.name" type="text" style="width: 300px;" placeholder="收件人" />
+                <n-input v-model:value="email_parameter.reply.email" type="text" placeholder="回复人邮件地址" />
             </n-card>
             <template #footer>
                 <n-button @click="save">

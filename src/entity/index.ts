@@ -114,8 +114,7 @@ export interface EmailConfig {
     smtp_url: string,
     smtp_username: string,
     smtp_password: string,
-    port: number,
-    max_size: number
+    port: number
 }
 ///邮箱内容
 

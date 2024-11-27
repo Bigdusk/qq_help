@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use lettre::{message::MultiPart, transport::smtp::{authentication::{Credentials, Mechanism}, response::Response, PoolConfig}, Message, SmtpTransport, Transport};
+use lettre::{message::MultiPart, transport::smtp::{authentication::Credentials, response::Response, PoolConfig}, Message, SmtpTransport, Transport};
 use serde::{Deserialize, Serialize};
 ///每次发送邮件所需参数
 #[derive(Debug,Clone, Serialize, Deserialize)]
@@ -23,8 +23,7 @@ pub struct EmailConfig {
     pub smtp_url: String,
     pub smtp_username: String,
     pub smtp_password: String,
-    pub port: u16,
-    pub max_size: u32
+    pub port: u16
 }
 ///邮箱内容
 #[derive(Debug,Clone, Serialize, Deserialize)]
@@ -58,10 +57,7 @@ impl EmailPacket {
                 self.config.smtp_username.to_owned(),
                 self.config.smtp_password.to_owned(),
             ))
-            // 配置预期的身份验证机制
-            .authentication(vec![Mechanism::Plain])
-            // Connection pool settings
-            .pool_config(PoolConfig::new().max_size(self.config.max_size))
+            .pool_config(PoolConfig::new().max_size(20))
             .build();
         
         // 通过远程中继发送电子邮件

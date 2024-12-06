@@ -4,7 +4,6 @@ import { onMounted, ref } from 'vue';
 import { QQGroup, QQGroupMember, QQInfo } from '../../entity';
 import { axios_util } from '../../hooks/request_local';
 import { changeTime } from '../../hooks';
-import axios from 'axios';
 
 
 function createColumns(): DataTableColumns<QQInfo> {
@@ -140,15 +139,17 @@ const get_qq_group_member_all = async () => {
 
   data.value.length = 0
   //批量请求
-  //组装
-  const request_all = r.data.map((qq_group_list: QQGroupMember) => {
-    return axios_util.post('/get_group_member_info', { "group_id": select.value, "user_id": qq_group_list.user_id }, { signal: controller2.signal })
-  })
-  //执行
-  const r_all = await axios.all(request_all)
-  r_all.forEach((all: any) => {
-    data.value.push(transformMember(all.data))
-  })
+  let index = 0
+  let timeoutId = await setInterval(async () => {
+    if (index >= 0 && index < r.data.length) {
+      const qq_group = await axios_util.post('/get_group_member_info', { "group_id": select.value, "user_id": r.data[index++].user_id }, { signal: controller2.signal })
+      data.value.push(transformMember(qq_group.data))
+    } else {
+      clearInterval(timeoutId)
+      return
+    }
+  }, 100);
+  index = 0
   show.value = false
 }
 
@@ -201,14 +202,14 @@ const fast_qq_group_member_all = async () => {
     controller4.abort()
     controller4 = new AbortController()
   }
-  
+
   data.value.length = 0
   options.value.forEach(async (group) => {
     const group_member = await axios_util.post('/get_group_member_list', { "group_id": group.value, "no_cache": true }, { signal: controller4.signal })
     group_member.data.forEach((qq_group_member: QQGroupMember) => {
-    data.value.push(transformMember(qq_group_member))
-  })
-  show.value = false
+      data.value.push(transformMember(qq_group_member))
+    })
+    show.value = false
   })
 }
 </script>
@@ -225,14 +226,14 @@ const fast_qq_group_member_all = async () => {
 
     <n-space>
       <n-button @click="fast_qq_group_member" type="success">
-      快速抓取
-    </n-button>
-    <n-button @click="get_qq_group_member_all" type="warning">
-      慢速抓取(人数少使用这个)
-    </n-button>
-    <n-button @click="fast_qq_group_member_all" type="error">
-      全部群组成员抓取
-    </n-button>
+        快速抓取
+      </n-button>
+      <n-button @click="get_qq_group_member_all" type="warning">
+        慢速抓取(信息比较全)
+      </n-button>
+      <n-button @click="fast_qq_group_member_all" type="error">
+        全部群组成员抓取
+      </n-button>
     </n-space>
   </n-flex>
   <n-badge :value="data.length">

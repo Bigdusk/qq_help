@@ -2,12 +2,13 @@
 import { RouterView } from 'vue-router';
 import { to_email_send, to_group_export, to_index, to_qq_delete, to_qq_export, to_qq_group_export, to_qq_group_supervision_and_scraping, to_qq_message, to_setting } from './hooks/router';
 import { onMounted, ref } from 'vue';
-import { createFingerprint } from './hooks';
+import { gte_uuid } from './hooks';
 import { Computer } from './entity';
 import { post } from './hooks/request';
 import { auth } from './hooks/auth';
 import { dateZhCN, zhCN } from 'naive-ui'
 import CardKeyButton from './tag_view/CardKeyButton.vue';
+import { message } from './hooks/discrete_api';
 const computer = ref<Computer>({
   authorization_id: 0,
   computer_id: '',
@@ -17,7 +18,7 @@ const computer = ref<Computer>({
 
 //获取电脑信息
 async function get_computer_info() {
-  computer.value.computer_id = localStorage.getItem('fingerprint') as string
+  computer.value.computer_id = String(localStorage.getItem('uuid'))
 
   post<Computer>('/computer/info', computer.value).then(r => {
     computer.value = r
@@ -26,8 +27,14 @@ async function get_computer_info() {
 
 onMounted(async () => {
   console.log('系统初始化');
-  //将游览器指纹缓存
-  localStorage.setItem('fingerprint', await createFingerprint())
+  //测试打印
+  gte_uuid().then(r => {
+    localStorage.setItem('uuid', String(r))
+  })
+  .catch(e => {
+    message.error(e)
+  })
+
   get_computer_info()
   auth(() => { })
 })
@@ -91,7 +98,7 @@ onMounted(async () => {
         </n-layout>
       </n-layout>
       <n-layout-footer position="absolute" style="height: 64px; padding: 24px" bordered>
-        版本: 0.1.2 | 软件使用到期时间: {{ computer.expires_at }}
+        版本: 0.1.3 | 软件使用到期时间: {{ computer.expires_at }}
         <CardKeyButton />
       </n-layout-footer>
     </n-layout>

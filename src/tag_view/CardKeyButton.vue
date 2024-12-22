@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { post } from '../hooks/request';
 import { notification } from '../hooks/discrete_api';
 
@@ -12,16 +12,6 @@ const computer = ref({
 })
 //兑换
 function use_card_key() {
-
-    const fingerprint = localStorage.getItem('fingerprint');
-    if (!fingerprint) {
-        notification.error({ title: '设备码获取出错', duration: 5000, });
-        return;
-    }
-
-    computer.value.computer_id = fingerprint;
-
-    computer.value.computer_id = fingerprint
     post<string>('/card_key/redeem', computer.value).then(r => {
 
         if (typeof r === 'string') {
@@ -29,6 +19,17 @@ function use_card_key() {
         }
     })
 }
+
+onMounted(() => {
+    //初始化获取设备码
+    const uuid = localStorage.getItem('uuid');
+    if (!uuid) {
+        notification.error({ title: '设备码获取出错', duration: 5000, });
+        return;
+    }
+
+    computer.value.computer_id = uuid;
+})
 </script>
 
 <template>

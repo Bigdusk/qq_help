@@ -13,7 +13,7 @@ const scrollElement = document.documentElement;
 let query_notice_all = () => {
   get<Notice[]>('/notice/query/all')
     .then(r => {
-      notice_all.value = r
+      notice_all.value = r.reverse()
     })
 }
 const notice_all = ref<Notice[]>([])

@@ -3,7 +3,7 @@ import { DataTableColumns, DataTableInst, NButton } from 'naive-ui';
 import { onMounted, ref } from 'vue';
 import { QQGroup, QQGroupMember, QQInfo } from '../../entity';
 import { axios_util } from '../../hooks/request_local';
-import { changeTime } from '../../hooks';
+import { changeTime, exportExcel } from '../../hooks';
 
 
 function createColumns(): DataTableColumns<QQInfo> {
@@ -67,11 +67,13 @@ const data = ref<QQGroupMember[]>([])
 
 const tableRef = ref<DataTableInst>()
 
-const exportSorterAndFilterCsv = () =>
+const exportSorterAndFilterCsv = () => {
   tableRef.value?.downloadCsv({
     fileName: 'QQ群:' + select.value,
     keepOriginalData: false
   })
+}
+  
 
 const columns = createColumns()
 
@@ -81,7 +83,7 @@ const select = ref<null | number>(null)
 //获取群名称
 const qq_group = ref<QQGroup[]>([])
 
-const get_group_name = (group_id: number): string => {
+const get_group_name = (group_id: number|null): string => {
   let name = ''
   qq_group.value.forEach(r => {
     if (r.group_id === group_id) {
@@ -212,6 +214,9 @@ const fast_qq_group_member_all = async () => {
     show.value = false
   })
 }
+
+
+const titleArr = ['群号','QQ号','昵称','群名片','性别','年龄','等级','加群时间','最近发言时间','角色','头衔','邮箱']
 </script>
 
 <template>
@@ -239,6 +244,10 @@ const fast_qq_group_member_all = async () => {
   <n-badge :value="data.length">
     <n-button @click="exportSorterAndFilterCsv">
       导出 CSV
+    </n-button>
+    -
+    <n-button @click="exportExcel(data, 'QQ群:' + get_group_name(select)+'('+ select +')', titleArr, 'QQ群:' + select)">
+      导出 EXCEL
     </n-button>
   </n-badge>
 

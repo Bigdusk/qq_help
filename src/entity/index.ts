@@ -50,16 +50,20 @@ export interface QQGroupMember {
     "card": string
     "sex": string
     "age": number
+
     "area": string
     "level": string
+
     "qq_level": string
     "join_time": number | string
     "last_sent_time": number | string
+
     "title_expire_time": number
     "unfriendly": boolean
     "card_changeable": boolean
     "is_robot": boolean
     "shut_up_timestamp": number
+    
     "role": string
     "title": string
     "email": string

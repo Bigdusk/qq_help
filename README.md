@@ -1,1 +1,1 @@
-<img src="图片链接" alt="描述文字" width="300"/>
+<img src="https://www.helloimg.com/i/2025/02/08/67a6e822c1041.jpg" alt="效果图" width="300"/>
